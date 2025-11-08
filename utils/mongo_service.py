@@ -136,3 +136,26 @@ class MockCollection:
     def insert_one(self, doc):
         self.bucket.append(doc)
         print(f"[MockMongo] insert_one: {doc}")
+
+# --- Additional helpers used by backend API ---
+def save_market_action(db, payload: dict):
+    """Record marketplace actions (create/update/listing interactions)."""
+    if isinstance(db, MockMongoDB):
+        db.log("market_actions", payload)
+    else:
+        db["market_actions"].insert_one(payload)
+
+def save_sustainability(db, payload: dict):
+    """Alias for saving sustainability score documents."""
+    # Reuse existing collection name for consistency
+    if isinstance(db, MockMongoDB):
+        db.log("sustainability_scores", payload)
+    else:
+        db["sustainability_scores"].insert_one(payload)
+
+def save_share(db, payload: dict):
+    """Record social share payloads (messages/links)."""
+    if isinstance(db, MockMongoDB):
+        db.log("social_shares", payload)
+    else:
+        db["social_shares"].insert_one(payload)
